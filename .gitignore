@@ -1,0 +1,19 @@
+# Local credentials and generated investigations
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+output/
+outputs/
+generated/
+investigations/
+
+# Local tooling
+node_modules/
+__pycache__/
+*.py[cod]
+.venv/
+.DS_Store
+Thumbs.db
+*.log
