@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<title>API Trailmap</title>
+<style>
+:root{color-scheme:light;--ink:#142f49;--muted:#526577;--line:#d9e2e8;--paper:#fff;--wash:#f1f5f7;--accent:#006c78}*{box-sizing:border-box}body{margin:0;font:15px/1.55 system-ui,sans-serif;color:var(--ink);background:var(--wash)}header{background:var(--ink);color:white;padding:24px 30px}header small{letter-spacing:.16em;color:#89e0d0}h1{font-size:28px;margin:4px 0}h2{font-size:19px}p{max-width:95ch}button,input,select{font:inherit;border:1px solid #a4b5c2;border-radius:6px;padding:8px 12px;background:white;color:var(--ink)}button{cursor:pointer}button:hover{background:#e3f2f2}:focus-visible{outline:3px solid #cc6f00;outline-offset:3px}.tools{display:flex;flex-wrap:wrap;gap:14px;padding:16px 24px;background:white;border-bottom:1px solid var(--line)}label{display:flex;gap:5px;flex-direction:column;font-size:13px}input{min-width:260px}.layout{display:grid;grid-template-columns:310px minmax(0,1fr);gap:18px;padding:20px}aside,section{background:white;border:1px solid var(--line);border-radius:10px;padding:18px;min-width:0}aside{max-height:75vh;overflow:auto}#results{list-style:none;padding:0}#results button{width:100%;text-align:left;margin:4px 0;overflow-wrap:anywhere}#results button[aria-pressed=true]{border:2px solid var(--accent);background:#e2f1ef}.method{font-size:12px;font-weight:800;color:var(--accent)}.panels{display:grid;gap:18px}#viewport{overflow:hidden;height:370px;background:#f7fafb;border:1px solid var(--line);touch-action:none;cursor:grab}svg{width:100%;height:100%}svg text{font:12px system-ui;fill:var(--ink)}svg .node{cursor:pointer}svg .node rect{fill:white;stroke:#738fa1}svg .node.selected rect{stroke:var(--accent);stroke-width:3}svg line{stroke:#73919d;stroke-width:1.5}svg line.inferred{stroke-dasharray:5 4}.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--wash);padding:14px;border-radius:6px}summary{cursor:pointer;overflow-wrap:anywhere}details{border-left:2px solid var(--line);padding-left:12px;margin:5px 0}.muted{color:var(--muted)}#notice{color:#805000}#detail{overflow-wrap:anywhere}.badge{display:inline-block;border:1px solid var(--line);padding:2px 7px;border-radius:5px;font-size:12px;margin:3px}footer{padding:12px 26px;color:var(--muted)}@media(max-width:850px){.layout{grid-template-columns:1fr}aside{max-height:280px}header{padding:20px}input{min-width:0;width:100%}}
+</style>
+</head>
+<body>
+<header><small>API TRAILMAP / OFFLINE EXPLORER</small><h1 id="name"></h1><p id="scope"></p></header>
+<div class="tools">
+<label><span data-label="search">Search operations and fields</span><input id="search" type="search"></label>
+<label><span data-label="category">Category</span><select id="category"></select></label>
+<label><span data-label="method">Method</span><select id="method"></select></label>
+<button id="reset" data-label="reset">Reset</button>
+<span id="count" role="status" aria-live="polite"></span>
+</div>
+<main class="layout">
+<aside><h2 data-label="operations">Operations</h2><p class="muted" data-label="keyboard">Use this list for keyboard navigation.</p><ul id="results"></ul></aside>
+<div class="panels">
+<section><div class="row"><h2 data-label="map">Dependency map</h2><button id="zoom-in" aria-label="Zoom in">+</button><button id="zoom-out" aria-label="Zoom out">−</button><button id="fit" data-label="fit">Fit</button></div><p class="muted" data-label="legend">Dashed edges are inferred. Drag to pan; use buttons or the wheel to zoom.</p><div id="viewport"><svg role="img" aria-label="Dependency map"><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#73919d"></path></marker></defs><g id="scene"></g></svg></div><p id="notice" role="status"></p></section>
+<section id="detail" tabindex="-1"><h2 data-label="select">Select an operation</h2></section>
+<section><h2 data-label="gaps">Gaps, conflicts and sources</h2><div id="gaps"></div><details><summary data-label="sources">Sources</summary><pre id="sources"></pre></details></section>
+</div>
+</main>
+<footer data-label="footer">Read-only local viewer. No API requests or external resources. All data is embedded.</footer>
+<script id="inventory" type="application/json">__TRAILMAP_DATA__</script>
+<script>
+'use strict';
+const data=JSON.parse(document.getElementById('inventory').textContent);
+const pt=String(data.language).startsWith('pt');
+const texts=pt?{search:'Buscar operações e atributos',category:'Categoria',method:'Método',reset:'Limpar',operations:'Operações',keyboard:'Use esta lista para navegar com o teclado.',map:'Mapa de dependências',fit:'Ajustar',legend:'Linhas tracejadas indicam inferências. Arraste para mover; use os botões ou a roda para ampliar.',select:'Selecione uma operação',gaps:'Lacunas, conflitos e fontes',sources:'Fontes',footer:'Visualizador local de consulta. Sem requisições à API ou recursos externos. Dados incorporados.',all:'Todos',none:'Nenhum resultado.',hidden:'Dependências com operações ocultas pelos filtros: ',contract:'Estrutura do contrato',evidence:'Evidências',relations:'Relações',details:'Registro completo',empty:'Nenhuma lacuna registrada; isso não comprova cobertura completa.',total:'operações visíveis',expand:'Abrir todos',collapse:'Fechar todos'}:{all:'All',none:'No results.',hidden:'Dependencies with operations hidden by filters: ',contract:'Contract structure',evidence:'Evidence',relations:'Relationships',details:'Full record',empty:'No gaps recorded; this does not prove complete coverage.',total:'operations visible',expand:'Expand all',collapse:'Collapse all'};
+document.documentElement.lang=pt?'pt-BR':'en';
+for(const el of document.querySelectorAll('[data-label]'))if(texts[el.dataset.label])el.textContent=texts[el.dataset.label];
+const $=id=>document.getElementById(id);
+function el(tag,text,cls){const node=document.createElement(tag);if(text!==undefined)node.textContent=text;if(cls)node.className=cls;return node;}
+function pretty(value){return JSON.stringify(value,null,2);}
+function svg(tag,attrs){const node=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [key,value]of Object.entries(attrs||{}))node.setAttribute(key,String(value));return node;}
+$('name').textContent=data.api.name;document.title=data.api.name+' · API Trailmap';$('scope').textContent=data.scope;
+$('sources').textContent=pretty(data.sources);
+for(const gap of data.gaps)$('gaps').append(el('p',gap));
+if(!data.gaps.length)$('gaps').append(el('p',texts.empty));
+for(const [id,values] of [['category',data.operations.map(op=>op.category||'Uncategorized')],['method',data.operations.map(op=>op.method)]]){
+ const select=$(id);const option=el('option',texts.all);option.value='';select.append(option);
+ for(const value of [...new Set(values)].sort()){const option=el('option',value);option.value=value;select.append(option);}
+}
+let selected=null,visible=[],transform={x:20,y:25,k:1};
+function updateTransform(){$('scene').setAttribute('transform',`translate(${transform.x},${transform.y}) scale(${transform.k})`);}
+function fit(){transform={x:20,y:25,k:Math.min(1,Math.max(.1,Math.min(($('viewport').clientWidth-40)/700,320/Math.max(80,Math.ceil(visible.length/2)*105))))};updateTransform();}
+function changeZoom(factor){transform.k=Math.min(3,Math.max(.1,transform.k*factor));updateTransform();}
+$('zoom-in').onclick=()=>changeZoom(1.2);$('zoom-out').onclick=()=>changeZoom(1/1.2);$('fit').onclick=fit;
+let drag=null;
+$('viewport').addEventListener('pointerdown',e=>{if(e.target.closest('.node'))return;drag={x:e.clientX,y:e.clientY,tx:transform.x,ty:transform.y};$('viewport').setPointerCapture(e.pointerId);});
+$('viewport').addEventListener('pointermove',e=>{if(!drag)return;transform.x=drag.tx+e.clientX-drag.x;transform.y=drag.ty+e.clientY-drag.y;updateTransform();});
+$('viewport').addEventListener('pointerup',()=>drag=null);$('viewport').addEventListener('pointercancel',()=>drag=null);
+$('viewport').addEventListener('wheel',e=>{e.preventDefault();changeZoom(e.deltaY<0?1.1:1/1.1);},{passive:false});
+function tree(key,value,depth=0){
+ if(value===null||typeof value!=='object')return el('p',key+': '+String(value));
+ const details=el('details');details.open=depth<1;details.append(el('summary',key+(Array.isArray(value)?` [${value.length}]`:'')));
+ for(const [child,item]of Object.entries(value))details.append(tree(child,item,depth+1));return details;
+}
+function show(op){
+ selected=op.id;const panel=$('detail');panel.replaceChildren();panel.append(el('h2',op.method+' '+op.path),el('p',op.summary));
+ for(const key of ['category','documented','executed','blocked','excluded'])panel.append(el('span',key+': '+String(op[key]),'badge'));
+ panel.append(el('h3',texts.evidence),el('pre',pretty(op.evidence)),el('h3',texts.contract));
+ const buttons=el('div',undefined,'row');
+ for(const [label,open]of [[texts.expand,true],[texts.collapse,false]]){const button=el('button',label);button.onclick=()=>{for(const node of panel.querySelectorAll('details'))node.open=open;};buttons.append(button);}panel.append(buttons,tree('contract',op.contract));
+ panel.append(el('h3',texts.relations),el('pre',pretty(data.relationships.filter(edge=>edge.from===op.id||edge.to===op.id))));
+ const full=el('details');full.append(el('summary',texts.details),el('pre',pretty(op)));panel.append(full);
+ for(const button of $('results').querySelectorAll('button'))button.setAttribute('aria-pressed',String(button.dataset.id===selected));draw();
+}
+function draw(){
+ const scene=$('scene');scene.replaceChildren();const positions=new Map();
+ visible.forEach((op,index)=>positions.set(op.id,{x:(index%2)*380,y:Math.floor(index/2)*105}));
+ let hidden=0;
+ for(const edge of data.relationships){const a=positions.get(edge.from),b=positions.get(edge.to);if(!a||!b){if(a||b)hidden++;continue;}
+ const dx=b.x-a.x,dy=b.y-a.y,ratio=Math.max(Math.abs(dx)/155,Math.abs(dy)/38,1),cut=1/ratio;
+ const line=svg('line',{x1:a.x+155+dx*cut,y1:a.y+38+dy*cut,x2:b.x+155-dx*cut,y2:b.y+38-dy*cut,'marker-end':'url(#arrow)',class:edge.certainty==='inferred'?'inferred':''});const title=svg('title');title.textContent=edge.kind+' · '+edge.certainty+' · '+edge.description;line.append(title);scene.append(line);
+ const label=svg('text',{x:(a.x+b.x)/2+155,y:(a.y+b.y)/2+94,'text-anchor':'middle'});label.textContent=edge.kind.slice(0,45);scene.append(label);
+ }
+ for(const op of visible){const p=positions.get(op.id),node=svg('g',{class:'node'+(selected===op.id?' selected':''),transform:`translate(${p.x},${p.y})`});
+ node.append(svg('rect',{width:310,height:76,rx:8}));const method=svg('text',{x:12,y:24});method.textContent=op.method+' · '+(op.category||'Uncategorized');const path=svg('text',{x:12,y:49});path.textContent=op.path.length>39?op.path.slice(0,36)+'…':op.path;const title=svg('title');title.textContent=op.method+' '+op.path;node.append(method,path,title);node.addEventListener('click',()=>show(op));scene.append(node);
+ }
+ $('notice').textContent=hidden?texts.hidden+hidden:'';updateTransform();
+}
+function refresh(){
+ const query=$('search').value.trim().toLowerCase(),category=$('category').value,method=$('method').value;
+ visible=data.operations.filter(op=>(!category||(op.category||'Uncategorized')===category)&&(!method||op.method===method)&&(!query||[op.path,op.method,op.category,op.summary,pretty(op.contract)].join(' ').toLowerCase().includes(query)));
+ $('results').replaceChildren();$('count').textContent=visible.length+' / '+data.operations.length+' '+texts.total;
+ for(const op of visible){const li=el('li'),button=el('button');button.dataset.id=op.id;button.setAttribute('aria-pressed',String(op.id===selected));button.append(el('span',op.method,'method'),el('div',op.path),el('small',op.summary));button.onclick=()=>show(op);li.append(button);$('results').append(li);}
+ if(!visible.length)$('results').append(el('li',texts.none));draw();
+}
+for(const id of ['search','category','method'])$(id).addEventListener(id==='search'?'input':'change',refresh);
+$('reset').onclick=()=>{for(const id of ['search','category','method'])$(id).value='';refresh();fit();};
+refresh();fit();
+</script>
+</body>
+</html>

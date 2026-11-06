@@ -1,6 +1,6 @@
 # Contributing to API Trailmap
 
-Thank you for helping make API integrations easier to understand. The project is currently in specification phase; read the [README](README.md) and [implementation specification](docs/SPECIFICATION.md) first.
+Thank you for helping make API integrations easier to understand. The project has an initial installable implementation; read the [README](README.md), [skill](SKILL.md), and [implementation specification](docs/SPECIFICATION.md) first.
 
 ## Propose a change
 
@@ -16,7 +16,7 @@ Before a substantial implementation, discuss its scope so that schema, rendering
 4. Use synthetic or explicitly shareable fixtures; remove secrets and personal data.
 5. Explain the change, how it was validated, and any known limitations in the pull request.
 
-There is no implemented runtime or test command yet. Do not invent passing checks. As implementation lands, each executable component must document its real setup and verification commands.
+Run `python scripts/verify_install.py` and `python -m unittest discover -s tests -v` from the repository root. Tests require Python 3.10+ and Node.js; runtime generation needs only Python. Do not invent passing checks. Distinguish isolated tests from live API and Postman runtime validation.
 
 ## Review expectations
 

@@ -1,6 +1,6 @@
 # Security and sensitive data
 
-API Trailmap is in specification phase. No executable release or security support window has been published.
+API Trailmap has an initial installable implementation. No security support window or independent security review has been published.
 
 Do not include credentials, access/refresh tokens, private contracts, customer records, or unsanitized response dumps in issues, pull requests, examples, or generated artifacts.
 
@@ -12,4 +12,4 @@ A useful private report identifies the affected version or commit, prerequisites
 
 ## Implementation security requirements
 
-The [specification](docs/SPECIFICATION.md) requires bounded source traversal, explicit API execution scope, secret-free exports, inert rendering of remote content, and offline HTML behavior. These are requirements to validate, not claims of completed security review.
+The [specification](docs/SPECIFICATION.md) requires bounded source traversal, explicit API execution scope, secret-free exports, inert rendering of remote content, and offline HTML behavior. Tests cover selected generator properties; these are not claims of completed security review. Field-name redaction is not a substitute for reviewing free-form text and provider-specific sensitive fields.

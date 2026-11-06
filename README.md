@@ -8,19 +8,37 @@
 
 **Turn API sources into traceable integration knowledge for developers and AI agents.**
 
-![Status: specification](https://img.shields.io/badge/status-specification-blue)
+![Status: initial implementation](https://img.shields.io/badge/status-initial%20implementation-blue)
 ![Interface: Agent Skill](https://img.shields.io/badge/interface-Agent%20Skill-00897b)
-![Planned outputs](https://img.shields.io/badge/planned-Markdown%20%7C%20Postman%20%7C%20JSON%20%7C%20HTML-orange)
+![Outputs](https://img.shields.io/badge/outputs-Markdown%20%7C%20Postman%20%7C%20JSON%20%7C%20HTML-00897b)
 
 [GitHub](https://github.com/weslenascimento/api-trailmap) · [Overview](#-overview) · [Workflow](#-workflow) · [Deliverables](#-deliverables) · [Specification](docs/SPECIFICATION.md) · [Contributing](CONTRIBUTING.md)
 
 </div>
 
-> **Project status — specification phase.** This repository currently contains the product specification and community documentation. The executable skill, generators, JSON schema, and interactive viewer are not implemented or released yet. Features below describe the approved target behavior. There is no installation command or demo available at this stage.
+> **Project status — initial implementation (0.1.0).** An installable skill is available at the repository root, with offline generators, a versioned inventory schema, a synthetic example, and a searchable standalone viewer. API discovery is conducted by your agent using its available tools; this is not an autonomous crawler. Read [current limitations](#-current-limitations) before using exports.
+
+## 🚀 Install with your agent
+
+```text
+Install the API Trailmap skill from https://github.com/weslenascimento/api-trailmap.
+Read INSTALL.md, install the complete package, and verify the installation.
+```
+
+The entry point is [`SKILL.md`](SKILL.md) in the repository root. See [installation instructions](INSTALL.md) for required resources, verification, updates, and manual installation. The generator requires **Python 3.10+**, with no third-party runtime dependencies. Host discovery must be confirmed separately from file installation.
+
+Try generation locally after cloning this repository:
+
+```text
+python scripts/verify_install.py
+python scripts/generate.py --input examples/inventory.json --output output/demo
+```
+
+Open `output/demo/INDEX.md` and `output/demo/api-trailmap.html`. The example is synthetic; no API requests are made.
 
 ## ✨ Overview
 
-API Trailmap is a planned agent skill that accepts an API URL, explores the accessible sources, maps operations and their dependencies, and produces an integration package that can be handed to another developer or AI agent without the original conversation.
+API Trailmap is an agent skill that guides an agent from an API URL through accessible sources, operation inventory, and dependency mapping to an integration package another developer or agent can use without the original conversation.
 
 Endpoint descriptions explain individual operations. A usable integration also needs to explain where identifiers come from, which credentials are required, which requests run first, and what remains uncertain. API Trailmap brings those details together and preserves their evidence.
 
@@ -36,7 +54,7 @@ Endpoint descriptions explain individual operations. A usable integration also n
 
 Markdown outputs are intended to be portable across agents. Native skill installation and execution depend on each host's capabilities and must be verified before compatibility is claimed.
 
-## 🧩 Planned capabilities
+## 🧩 Capabilities
 
 | Capability | Expected behavior |
 | --- | --- |
@@ -92,18 +110,18 @@ The HTML viewer contains its own data. A separate JSON export is not required to
 
 ## 📦 Deliverables
 
-The following illustrates a generated package, not files already shipped in this repository:
+The following illustrates a generated package. Run the bundled synthetic example to produce one locally:
 
 ```text
 integration-package/
 ├── INDEX.md                       # Always generated
 ├── categories/                    # Category mode only
-│   └── customers.md
+│   └── category-<hash>.md
 ├── endpoints/                     # Endpoint mode only
 │   └── get-customer.md
 ├── postman/                       # Optional
 │   ├── api.postman_collection.json
-│   └── sandbox.postman_environment.json
+│   └── local.postman_environment.json
 ├── api-trailmap.json               # Optional separate export
 └── api-trailmap.html               # Optional standalone viewer
 ```
@@ -141,11 +159,11 @@ Importable files do not imply successful live execution. The handoff states whic
 
 The optional export uses a versioned API Trailmap format to describe operations, field structures, authentication, relationships, evidence, conflicts, and coverage. Stable references connect producers to consumers rather than relying on repeated display names.
 
-The first release must publish a machine-readable schema and fixtures before claiming schema compliance. See the [planned data contract](docs/SPECIFICATION.md#6-canonical-data-contract).
+The [inventory schema](schemas/inventory.schema.json), [contract guide](references/inventory.md), and [synthetic fixture](examples/inventory.json) define version 1.0. The helper performs built-in structural and reference checks; full JSON Schema validation is a separate development check.
 
 ### 🌐 Standalone interactive HTML
 
-Open the generated HTML directly in a browser. The approved target is a single file with embedded JavaScript, styles, and sanitized inventory data, without a server, CDN, or network dependency.
+Open the generated HTML directly in a browser. The viewer is a single file with embedded JavaScript, styles, and sanitized inventory data, without a server, CDN, or network dependency.
 
 | Feature | Interaction |
 | --- | --- |
@@ -160,16 +178,16 @@ The viewer is for exploration, not an API execution console. It must offer a key
 
 ## 💬 Intended usage
 
-### Planned installation experience
+### Installation experience
 
-Once an installable release is available, users should be able to ask a compatible agent:
+Ask a compatible agent:
 
 ```text
 Install the API Trailmap skill from:
 https://github.com/weslenascimento/api-trailmap
 ```
 
-The distribution must include the skill entry point and its required resources, host-specific installation guidance, dependency checks, and post-install verification. The agent needs repository access and permission to write to its skill directory. Installation paths and any reload requirement depend on the host. This repository is not yet an installable skill; do not report installation success from downloading these planning documents.
+The distribution includes the entry point, references, generators, templates, schema, and example. The agent needs repository access and permission to write to its supported skill directory. Installation paths and any reload requirement depend on the host. Run `scripts/verify_install.py` and confirm host discovery before reporting complete installation.
 
 ### Analyze an API
 
@@ -183,7 +201,7 @@ a structured JSON export, and the standalone HTML viewer.
 Use documentation-only exploration. Do not invoke API operations.
 ```
 
-`api.example.com` is illustrative. This is a proposed interaction, not a working CLI command.
+`api.example.com` is illustrative. This is an agent request, not a CLI command.
 
 The agent should recover existing preferences, ask only the remaining questions, inspect the source, and report missing access or evidence. It must not invent an API contract to fill a template.
 
@@ -211,18 +229,38 @@ Coverage reports count discovered, documented, executed, blocked, and excluded o
 - Render remote strings as inert content in HTML; never execute source-provided markup or scripts.
 - Record partial progress when access, budgets, authentication, or essential evidence are missing.
 
+## 🧪 Validation
+
+```text
+python scripts/verify_install.py
+python -m unittest discover -s tests -v
+python scripts/generate.py --input examples/inventory.json --validate-only
+```
+
+Runtime generation uses only Python's standard library. Development tests also use Node.js to syntax-check viewer JavaScript and exercise Postman hooks with a local test double. These checks do not execute a live API or prove Postman import/runtime behavior.
+
+## 🚧 Current limitations
+
+- Your agent retrieves and interprets API sources; there is no bundled autonomous crawler or complete OpenAPI parser.
+- The helper renders reviewed inventories; it cannot independently prove that the inventory covers the source.
+- Baseline Postman support covers JSON bodies, parameters, bearer tokens, and evidence-backed scalar captures. Other auth schemes, multipart requests, refresh flows, and provider-specific scripts require agent-authored extensions and separate validation.
+- Built-in labels support English and Brazilian Portuguese. Other languages require agent translation of generated labels.
+- Redaction by field name is defense in depth. The agent must review prose, URLs, custom headers, and personal data before export.
+- Large-map performance limits are not benchmarked.
+- Installed package verification is available; automatic loading across all agent hosts is not certified.
+
 ## 🛣️ Roadmap
 
 These are milestones, not release commitments or completed capabilities.
 
 - [x] Consolidate approved product behavior and delivery criteria.
 - [x] Write the implementation specification and public-facing project documentation.
-- [ ] Implement the portable skill instructions and focused references.
-- [ ] Publish the canonical schema and representative synthetic fixtures.
-- [ ] Implement source inventory and Markdown generation.
-- [ ] Implement Postman exports and evidence-backed script generation.
-- [ ] Implement JSON export and the offline HTML viewer.
-- [ ] Validate end-to-end behavior and publish a real example package.
+- [x] Implement the portable skill instructions and focused references.
+- [x] Publish the inventory schema and a synthetic fixture.
+- [x] Implement inventory validation and Markdown generation.
+- [x] Implement baseline Postman exports and evidence-backed capture scripts.
+- [x] Implement JSON export and the offline HTML viewer.
+- [ ] Validate source-to-handoff behavior against a real, authorized API and publish a sanitized example.
 - [ ] Select a license, complete branding assets, and prepare the first release.
 
 ## 🤝 Contributing
@@ -239,12 +277,12 @@ Do not submit credentials, private API contracts, customer data, or production r
 - [OpenAPI Specification](https://spec.openapis.org/oas/latest.html) — API contract reference; support must be declared per implemented version.
 - [Postman Collection v2.1 schema](https://schema.getpostman.com/json/collection/v2.1.0/collection.json) — proposed collection export target.
 - [Postman scripting documentation](https://learning.postman.com/docs/tests-and-scripts/write-scripts/intro-to-scripts/) — execution hooks and runtime behavior.
-- [JSON Schema](https://json-schema.org/) — planned machine-readable inventory validation.
+- [JSON Schema](https://json-schema.org/) — machine-readable inventory format.
 - [Mermaid](https://mermaid.js.org/) — text-based maps in Markdown.
 - [WCAG 2.2](https://www.w3.org/TR/WCAG22/) — accessibility reference for the viewer.
 - [GitHub contributor guidelines](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/setting-guidelines-for-repository-contributors) — community contribution guidance.
 
-JSON Crack inspired the requested interaction style. API Trailmap's planned viewer is its own feature; this project does not claim affiliation with JSON Crack, Postman, or any agent vendor.
+JSON Crack inspired the requested interaction style. API Trailmap's viewer is its own feature; this project does not claim affiliation with JSON Crack, Postman, or any agent vendor.
 
 ## 🎨 Branding and publication
 

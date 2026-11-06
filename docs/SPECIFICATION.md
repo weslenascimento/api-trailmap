@@ -1,8 +1,8 @@
 # API Trailmap — Implementation Specification
 
-Status: approved product scope; implementation pending. Date: 2026-11-06.
+Status: approved product scope; initial implementation available with limitations in README. Date: 2026-11-06.
 
-This document is self-contained and consolidates the approved planning decisions. Technical proposals below are identified separately from confirmed product requirements. No generated collection, viewer, crawler, or executable skill is delivered by this specification.
+This document is self-contained and consolidates the approved planning decisions. It remains the target contract; not every target is complete. The root skill, inventory guide/schema, offline generators, synthetic fixture, and viewer implement the initial subset. The README records current limitations. Discovery uses the host agent's tools rather than a bundled crawler.
 
 ## 1. Purpose and boundaries
 
@@ -229,4 +229,4 @@ These do not change approved product behavior. Implementation may propose techni
 
 ## 14. Repository-link installation requirement
 
-The user must be able to ask a compatible agent to install API Trailmap from https://github.com/weslenascimento/api-trailmap. The installable distribution must contain `SKILL.md` and all required references, scripts, and assets. Document supported host destinations, prerequisites, version selection, updates, and verification. Installation must preserve unrelated skills and user configuration and must not report success until required files and dependencies are verified. State any required session reload. Repository access and filesystem installation permissions remain host prerequisites; do not promise universal installation support before testing it. The current specification-only repository does not satisfy this installation requirement yet.
+The user must be able to ask a compatible agent to install API Trailmap from https://github.com/weslenascimento/api-trailmap. The installable distribution must contain `SKILL.md` and all required references, scripts, and assets. Document supported host destinations, prerequisites, version selection, updates, and verification. Installation must preserve unrelated skills and user configuration and must not report success until required files and dependencies are verified. State any required session reload. Repository access and filesystem installation permissions remain host prerequisites; do not promise universal installation support before testing it. The root package now implements file installation and verification; host discovery must be checked in the target environment.

@@ -22,7 +22,7 @@ Do not add a broken image reference, recreate the logo without instruction, or i
 - [ ] Add author attribution and a LinkedIn link if the owner wishes.
 - [ ] Select a license and add the exact license text with correct attribution.
 - [x] Save and integrate the supplied official logo.
-- [ ] Keep the specification-phase notice visible.
+- [x] Keep the initial-implementation notice and current limitations visible.
 - [ ] Review repository contents for secrets, personal information, and unrelated workspace files.
 - [ ] Configure Issues, contribution entry points, and private vulnerability reporting as applicable.
 - [ ] Set the repository description, topics, and social preview image.

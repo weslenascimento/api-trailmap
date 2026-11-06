@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "1.0",
+  "api": {
+    "name": "Trailmap Example API",
+    "baseUrl": "https://api.example.com",
+    "description": "Synthetic fixture. No real service is contacted.",
+    "setup": "Import the collection and local environment. Fill credentials locally. No request has been executed.",
+    "workflows": "Authenticate, then use the captured access token to list projects. The token selector is supported by the synthetic contract only."
+  },
+  "language": "en",
+  "scope": "Synthetic documentation only. Two operations; no API execution.",
+  "preferences": {"organization": "category", "postman": true, "variables": true, "scripts": true, "json": true, "html": true},
+  "sources": [{"id": "fixture", "locator": "Synthetic contract, not a public API", "status": "accessible"}],
+  "operations": [
+    {
+      "id": "authenticate", "method": "POST", "path": "/session", "category": "Authentication",
+      "summary": "Obtain an access token", "evidence": ["fixture"],
+      "documented": true, "executed": false, "blocked": false, "excluded": false,
+      "contract": {
+        "authentication": "None for the login operation.",
+        "parameters": [],
+        "requestBody": {"type": "object", "required": ["username", "password"], "properties": {"username": {"type": "string"}, "password": {"type": "string"}}},
+        "responses": {"200": {"description": "Synthetic successful login", "schema": {"type": "object", "properties": {"access_token": {"type": "string"}}}}},
+        "notes": "No real credentials or tokens are included. Error responses are not documented in this fixture."
+      },
+      "requestBody": {"username": "", "password": ""},
+      "captures": [{"variable": "access_token", "pointer": "/access_token", "successCodes": [200], "evidence": ["fixture"]}]
+    },
+    {
+      "id": "list-projects", "method": "GET", "path": "/projects", "category": "Projects",
+      "summary": "List projects", "evidence": ["fixture"],
+      "documented": true, "executed": false, "blocked": false, "excluded": false,
+      "contract": {
+        "authentication": "Bearer token from POST /session",
+        "parameters": [{"name": "page", "in": "query", "required": false, "schema": {"type": "integer", "minimum": 1}}],
+        "responses": {"200": {"schema": {"type": "array", "items": {"type": "object", "properties": {"id": {"type": "string"}, "name": {"type": "string"}}}}}},
+        "pagination": "Only the page parameter is documented; terminal-page behavior is unknown."
+      },
+      "parameters": [{"name": "page", "in": "query", "required": false}],
+      "auth": {"type": "bearer", "variable": "access_token"}
+    }
+  ],
+  "relationships": [{"id": "session-projects", "from": "authenticate", "to": "list-projects", "kind": "authentication prerequisite", "certainty": "documented", "evidence": ["fixture"], "pointer": "/access_token", "target": "Authorization: Bearer", "description": "The login response produces the token consumed by the project listing."}],
+  "gaps": ["Synthetic example only. No live execution or provider compatibility is claimed."]
+}
