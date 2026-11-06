@@ -8,11 +8,11 @@ This document tracks publication readiness without presenting pending implementa
 - Repository/skill identifier: `api-trailmap`.
 - Tagline: **APIs Discovered. Paths Mapped.**
 - Description: Explore APIs, map endpoint relationships, and generate agent-ready documentation and Postman collections.
-- Source logo: supplied by the project owner in the planning conversation; the original image has not been saved into this repository.
+- Official skill logo: supplied by the project owner at https://i.postimg.cc/PJLhtptR/logo-api-trailmap.png and bundled unchanged at `assets/brand/api-trailmap-logo.png`.
 
 ## Logo integration
 
-Preserve the supplied artwork. Once its original file is available, place it at `assets/brand/api-trailmap-logo.png`, verify it visually, and add a centered relative image to the README. Suggested alternative text: “API Trailmap — multicolor map pin combining a connected route, circuitry, and API documentation.”
+The supplied artwork is saved at `assets/brand/api-trailmap-logo.png`, visually verified, and displayed in the README using a centered relative image. Alternative text: “API Trailmap — multicolor map pin combining a connected route, circuitry, and API documentation.”
 
 Do not add a broken image reference, recreate the logo without instruction, or imply the asset has already been bundled. Confirm redistribution rights and asset licensing before public release. Derive social preview crops from the original only after checking legibility; do not distort the artwork.
 
@@ -21,7 +21,7 @@ Do not add a broken image reference, recreate the logo without instruction, or i
 - [x] Confirm repository: https://github.com/weslenascimento/api-trailmap, owned by `weslenascimento`. Name collisions have not been assessed.
 - [ ] Add author attribution and a LinkedIn link if the owner wishes.
 - [ ] Select a license and add the exact license text with correct attribution.
-- [ ] Save and integrate the original logo.
+- [x] Save and integrate the supplied official logo.
 - [ ] Keep the specification-phase notice visible.
 - [ ] Review repository contents for secrets, personal information, and unrelated workspace files.
 - [ ] Configure Issues, contribution entry points, and private vulnerability reporting as applicable.

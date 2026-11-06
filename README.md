@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="assets/brand/api-trailmap-logo.png" alt="API Trailmap — multicolor map pin combining a connected route, circuitry, and API documentation" width="640">
+
 # 🧭 API Trailmap
 
 ### APIs Discovered. Paths Mapped.
@@ -246,7 +248,7 @@ JSON Crack inspired the requested interaction style. API Trailmap's planned view
 
 ## 🎨 Branding and publication
 
-The supplied identity uses a multicolor location pin, a connected route, and the tagline **“APIs Discovered. Paths Mapped.”** Brand integration and publication checks are tracked in [PUBLICATION.md](docs/PUBLICATION.md).
+The official skill logo is bundled at [`assets/brand/api-trailmap-logo.png`](assets/brand/api-trailmap-logo.png). It uses a multicolor location pin, a connected route, and the tagline **“APIs Discovered. Paths Mapped.”** Publication checks are tracked in [PUBLICATION.md](docs/PUBLICATION.md).
 
 ## ⚖️ License
 

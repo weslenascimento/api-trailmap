@@ -221,7 +221,7 @@ Check meaningful invariants: inventory/output correspondence, schema fidelity, e
 
 - Confirmed repository: https://github.com/weslenascimento/api-trailmap, owned by `weslenascimento`. Author display attribution and LinkedIn profile link remain open.
 - License for code, documentation, and supplied branding assets.
-- Original logo file placement and alternative text; never substitute a recreated image silently.
+- Logo placement is complete: `assets/brand/api-trailmap-logo.png`, displayed with alternative text in the README. Future skill packaging must include the official asset when needed.
 - Runtime/toolchain, supported source/contract versions, schema version policy, and dependency licenses.
 - First release version, measured viewer capacity, and verified agent host compatibility.
 
